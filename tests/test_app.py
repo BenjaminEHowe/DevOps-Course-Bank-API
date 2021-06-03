@@ -2,7 +2,7 @@
 import pytest
 
 from bank_api.app import app
-
+from flask import json
 
 @pytest.fixture
 def client():
@@ -11,8 +11,12 @@ def client():
 
 
 def test_account_creation(client):
-    # Use the client to make requests e.g.:
-    # client.post(...)
-    # client.get(...)
-    # https://flask.palletsprojects.com/en/1.1.x/testing/
-    pass
+    ACCOUNT_NAME = 'Bob'
+    initialRequest = client.get(f'accounts/{ACCOUNT_NAME}')
+    assert initialRequest.status_code == 404
+    createRequest = client.post(f'accounts/{ACCOUNT_NAME}')
+    assert createRequest.status_code == 200
+    subsequentRequest = client.get(f'accounts/{ACCOUNT_NAME}')
+    assert subsequentRequest.status_code == 200
+    data = json.loads(subsequentRequest.data)
+    assert data['name'] == ACCOUNT_NAME
