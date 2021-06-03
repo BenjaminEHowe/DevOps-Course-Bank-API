@@ -43,6 +43,28 @@ def test_cannot_modify_accounts_set(bank):
 
     assert len(bank.accounts) == 0
 
+def test_can_add_transaction(bank):
+    assert len(bank.transactions) == 0
+    ACCOUNT_NAME = 'Test'
+    bank.create_account(ACCOUNT_NAME)
+    TRANSACTION_AMOUNT = 1
+    bank.add_funds(ACCOUNT_NAME, TRANSACTION_AMOUNT)
+    assert len(bank.transactions) == 1
+    assert bank.transactions[0].account.name == ACCOUNT_NAME
+    assert bank.transactions[0].amount == TRANSACTION_AMOUNT
 
-# TODO: Add unit tests for bank.add_funds()
+def test_can_add_negative_transaction(bank):
+    assert len(bank.transactions) == 0
+    ACCOUNT_NAME = 'Test'
+    bank.create_account(ACCOUNT_NAME)
+    TRANSACTION_AMOUNT = -1
+    bank.add_funds(ACCOUNT_NAME, TRANSACTION_AMOUNT)
+    assert len(bank.transactions) == 1
+    assert bank.transactions[0].account.name == ACCOUNT_NAME
+    assert bank.transactions[0].amount == TRANSACTION_AMOUNT
 
+def test_cannot_transact_non_existant_account(bank):
+    ACCOUNT_NAME = 'Test'
+    TRANSACTION_AMOUNT = -1
+    with pytest.raises(ValueError):
+        bank.add_funds(ACCOUNT_NAME, TRANSACTION_AMOUNT)
